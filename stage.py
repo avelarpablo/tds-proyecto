@@ -34,7 +34,8 @@ class Stage:
         if not (self.serverStatus == 0 and self.numCustomers > 0):
             return None
 
-        self.departureTime = masterClock + self.departureInterval # ****** Función de probabilidad
+        # Agregar función de probabilidad
+        self.departureTime = masterClock + self.departureInterval
         self.serverStatus = 1
 
         return {
@@ -52,12 +53,6 @@ class Stage:
 
     def isBlocked(self):
         return True if self.serverStatus == 3 else False
-
-    # def setNewOperationalTime(self, masterClock):
-    #     self.operationalTime = masterClock + self.fixTime
-
-    # def setNewBreakTime(self, masterClock):
-    #     self.breakTime = masterClock + self.operationalInvertal
 
     def isFull(self):
         return True if self.numCustomers >= self.queueLimit else False

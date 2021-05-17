@@ -27,7 +27,6 @@ class CashierStage:
         if (randomValue <= 7):
             self.commonCustomers += 1 
         else:
-            print("Entré a clientes prioritarios")
             self.prioritaryCustomers += 1
 
     def departure(self, cashierType, cashierIndex):
@@ -78,7 +77,8 @@ class CashierStage:
                 and self.getBussyCashiers(cashierType) < customers):
                 continue
             
-            newDepartureTime = masterClock + self.departureInterval # ****** Función de probabilidad
+            # Agregar función de probabilidad
+            newDepartureTime = masterClock + self.departureInterval
             cashiers[cashierIndex].setNewDeparture(newDepartureTime)
 
             return {
@@ -88,12 +88,6 @@ class CashierStage:
             }
         
         return None
-
-    # def setNewOperationalTime(self, masterClock):
-    #     self.operationalTime = masterClock + self.fixTime
-
-    # def setNewBreakTime(self, masterClock):
-    #     self.breakTime = masterClock + self.operationalInvertal
 
     def getNumCustomers(self):
         return self.commonCustomers + self.prioritaryCustomers

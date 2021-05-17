@@ -11,10 +11,6 @@ DEPARTURE = "DEPARTURE"
 BREAK = "BREAK"
 OPERATION = "OPERATION"
 
-# s0 etapa 1
-# s1 etapa 2
-# c0 etapa 2 cajero común
-# p0 etapa 2 cajero prioritario
 def setEventType(typeCode, serverType, index):
     return { "typeCode": typeCode, "serverType": serverType, "index": index }
 
@@ -47,17 +43,6 @@ class Simulation:
             setEventType(BREAK, 's', 1),
             self.cashierStage.breakTime
         )            
-    
-    def printFutureEventList(self):
-        node = self.futureEventList.head            
-
-        while node != None:
-            eventType = node.type
-            string = f"Type: {eventType['typeCode']}-{eventType['stageIndex']} - Clock: {node.clock}"
-
-            print(string, end=" => ")
-            node = node.next
-        print("\n")
 
     def createResultsTable(self):
         self.resultsTable = []
@@ -158,46 +143,6 @@ class Simulation:
                     self.stage.unlockServer()
                     self.cashierStage.arrival()
 
-    #     # Case BREAK
-    #     if typeCode == BREAK:
-    #         # If server is busy during the break
-    #         if stage.serverStatus == 1:
-    #             stage.departureTime += stage.fixTime
-    #             self.futureEventList.deleteNode({
-    #                 "typeCode": DEPARTURE,
-    #                 "stageIndex": stageIndex
-    #             })
-    #             self.futureEventList.insertNode(
-    #                 setEventType(DEPARTURE, stageIndex),
-    #                 stage.departureTime
-    #             )
-
-    #         stage.serverStatus = 2
-    #         stage.setNewOperationalTime(self.masterClock)
-    #         stage.breakTime = IDLE
-
-    #         # Add new operational time event to futureEventList
-    #         self.futureEventList.insertNode(
-    #             setEventType(OPERATION, stageIndex),
-    #             stage.operationalTime
-    #         )
-
-    #     # Case OPERATION
-    #     if typeCode == OPERATION:
-    #         stage.operationalTime = IDLE
-    #         stage.setNewBreakTime(self.masterClock)
-    #         if stage.serverStatus != 3:
-    #             if stage.departureTime != IDLE:
-    #                 stage.serverStatus = 1
-    #             else:
-    #                 stage.serverStatus = 0
-
-    #         # Add new break time event to futureEventList
-    #         self.futureEventList.insertNode(
-    #             setEventType(BREAK, stageIndex),
-    #             stage.breakTime
-    #         )
-        
         # Check if there is any idle server
         for stage in [self.stage, self.cashierStage]:
             departureValues = stage.getToWork(self.masterClock)
@@ -228,13 +173,13 @@ class Simulation:
             self.executeAction(event.type)
 
             # Check if there is any aditional event in this time
-            # while self.futureEventList.head.clock == event.clock:
-            #     event = self.getNextEvent()
-            #     self.executeAction(event.type)
+            while self.futureEventList.head.clock == event.clock:
+                event = self.getNextEvent()
+                self.executeAction(event.type)
             
             # Add current state to results table
             self.addCurrentStateToTable(step + 1)            
       
         # Print results table
-        # self.printResultsTable()
         self.printRestultsTableAsCSV()
+        print("See results in file simulation_results.csv")
