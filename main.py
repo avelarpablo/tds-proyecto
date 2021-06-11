@@ -46,11 +46,15 @@ def validNumberInput(message, min=None, max=None):
     return value
 
 def main():
+    print("**************************************************************\n")
+    print("The next program makes a simulation of the Customer Service")
+    print("process of a branch belonging to Banco Agrícola.\n")
     steps = validNumberInput("Enter the number of steps to simulate: ", min=1)
 
     simulation = Simulation()
 
     simulation.executeSimulation(steps)
+    print("\n**************************************************************")
 
 if __name__ == "__main__":
     main()
