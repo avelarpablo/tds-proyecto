@@ -89,6 +89,59 @@ class CashierStage:
         
         return None
 
+    def breakEvent(self, masterClock, serverType, index):
+        cashiers = self.commonCashiers if serverType == 'c' else self.prioritaryCashiers
+        cashier = cashiers[index]
+        
+        if cashier.status == 1:
+            # Updating status
+            cashier.breakTime = cashier.departureTime
+
+            return [
+                "BREAK",
+                {
+                    "serverType": serverType,
+                    "index": index,
+                    "time": cashier.departureTime
+                }
+            ]
+
+        elif cashier.status == 0:
+            newOperationalTime = masterClock + cashier.fixTime
+
+            # Updating status
+            cashier.breakTime = cashier.IDLE
+            cashier.operationalTime = newOperationalTime
+            cashier.status = 2
+            
+            return [
+                "OPERATION",
+                {
+                    "serverType": serverType,
+                    "index": index,
+                    "time": newOperationalTime 
+                }
+            ]
+
+        return None
+
+    def operationEvent(self, masterClock, serverType, index):
+        cashiers = self.commonCashiers if serverType == 'c' else self.prioritaryCashiers
+        cashier = cashiers[index]
+
+        # Updating state
+        cashier.operationalTime = cashier.IDLE
+        cashier.status = 0
+
+        newBreakTime = masterClock + cashier.operationalInvertal
+        cashier.breakTime = newBreakTime
+
+        return {
+            "serverType": serverType,
+            "index": index,
+            "time": newBreakTime 
+        }
+
     def getNumCustomers(self):
         return self.commonCustomers + self.prioritaryCustomers
 
@@ -109,7 +162,5 @@ class CashierStage:
         return [
             self.getNumCustomers(),
             *commonCashiersState,
-            *prioritaryCashiersState,
-            self.breakTime,
-            self.operationalTime
+            *prioritaryCashiersState
         ]

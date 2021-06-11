@@ -18,8 +18,8 @@ class Simulation:
     def __init__(self, fistArrival):
         self.masterClock = 0
         self.arrivalTime = fistArrival
-        self.arrivalInterval = 40 # TODO Función de probabilidad
-        self.stage = Stage(0, IDLE, 240, 10000, 0)
+        self.arrivalInterval = 5 # TODO Función de probabilidad
+        self.stage = Stage(0, IDLE, 15, IDLE, 0)
         self.cashierStage = CashierStage(0, 0, 3, 1, 25)
         self.createFutureEventList()
         self.createResultsTable()
@@ -39,23 +39,58 @@ class Simulation:
         )            
 
         # Second stage events
-        self.futureEventList.insertNode(
-            setEventType(BREAK, 's', 1),
-            self.cashierStage.breakTime
-        )            
+        # Common cashiers
+        for index, cashier in enumerate(self.cashierStage.commonCashiers):
+            if cashier.breakTime != IDLE:
+                self.futureEventList.insertNode(
+                    setEventType(BREAK, 'c', index),
+                    cashier.breakTime
+                )            
+
+            if cashier.operationalTime != IDLE:
+                self.futureEventList.insertNode(
+                    setEventType(OPERATION, 'c', index),
+                    cashier.operationalTime
+                )            
+                
+        # Common cashiers
+        for index, cashier in enumerate(self.cashierStage.prioritaryCashiers):
+            if cashier.breakTime != IDLE:
+                self.futureEventList.insertNode(
+                    setEventType(BREAK, 'p', index),
+                    cashier.breakTime
+                )            
+
+            if cashier.operationalTime != IDLE:
+                self.futureEventList.insertNode(
+                    setEventType(OPERATION, 'p', index),
+                    cashier.operationalTime
+                )            
 
     def createResultsTable(self):
         self.resultsTable = []
 
         commonHeader = []
         for i in range(len(self.cashierStage.commonCashiers)):
-            header = [f"DT2-C{i + 1}", f"CS{i + 1}"]
+            header = [
+                f"DT2-C{i + 1}",
+                f"BT2-C{i + 1}",
+                f"OT2-C{i + 1}",
+                f"CS{i + 1}"
+            ]
+            
             for element in header:
                 commonHeader.append(element)
 
         priotaryHeader = []
         for i in range(len(self.cashierStage.prioritaryCashiers)):
-            header = [f"DT2-P{i + 1}", f"PS{i + 1}"]
+            header = [
+                f"DT2-D{i + 1}",
+                f"BT2-D{i + 1}",
+                f"OT2-D{i + 1}",
+                f"PS{i + 1}"
+            ]
+
             for element in header:
                 priotaryHeader.append(element)
 
@@ -143,6 +178,52 @@ class Simulation:
                     self.stage.unlockServer()
                     self.cashierStage.arrival()
 
+        # Case BREAK
+        if typeCode == BREAK:
+            stage = self.stage if serverType == 's' else self.cashierStage
+
+            eventReturn = stage.breakEvent(self.masterClock, serverType, index)
+
+            if eventReturn is not None:
+                eventCode, eventValues = eventReturn
+
+                self.futureEventList.insertNode(
+                    setEventType(
+                        eventCode,
+                        eventValues["serverType"],
+                        int(eventValues["index"])
+                    ),
+                    eventValues["time"]
+                )
+        
+        # Case OPERATION
+        if typeCode == OPERATION:
+            stage = self.stage if serverType == 's' else self.cashierStage
+
+            eventValues = stage.operationEvent(
+                self.masterClock,
+                serverType,
+                index
+            )
+
+            self.futureEventList.insertNode(
+                setEventType(
+                    BREAK,
+                    eventValues["serverType"],
+                    int(eventValues["index"])
+                ),
+                eventValues["time"]
+            )
+            
+        # Check if there is any break in the same time in the same machine
+        nextEvent = self.futureEventList.head
+
+        if (nextEvent.type["typeCode"] == BREAK
+            and nextEvent.clock == self.masterClock 
+            and nextEvent.type["serverType"] == serverType
+            and nextEvent.type["index"] == index):
+            return
+        
         # Check if there is any idle server
         for stage in [self.stage, self.cashierStage]:
             departureValues = stage.getToWork(self.masterClock)

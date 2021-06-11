@@ -18,8 +18,8 @@ class Stage:
 
         # Other variables
         self.departureInterval = 20 # TODO función de probabilidad
-        self.operationalInvertal = 200 # TODO
-        self.fixTime = 50 # TODO
+        self.operationalInvertal = 200 # TODO función de probabilidad
+        self.fixTime = 50 # TODO función de probabilidad
         self.queueLimit = queueLimit
     
     def arrival(self):
@@ -42,6 +42,58 @@ class Stage:
             "serverType": "s",
             "index": 0,
             "time": self.departureTime
+        }
+    
+    def breakEvent(self, masterClock, serverType, index):
+        if self.serverStatus == 1:
+            # Updating status
+            self.breakTime = self.departureTime
+
+            return [
+                "BREAK",
+                {
+                    "serverType": serverType,
+                    "index": index,
+                    "time": self.departureTime
+                }
+            ]
+
+        elif self.serverStatus == 0:
+            newOperationalTime = masterClock + self.fixTime
+
+            # Updating status
+            self.breakTime = self.IDLE
+            self.operationalTime = newOperationalTime
+            self.serverStatus = 2
+            
+            return [
+                "OPERATION",
+                {
+                    "serverType": serverType,
+                    "index": index,
+                    "time": newOperationalTime 
+                }
+            ]
+        
+        return None 
+    
+    def operationEvent(self, masterClock, serverType, index):
+        # Updating state
+        self.operationalTime = self.IDLE
+
+        newBreakTime = masterClock + self.operationalInvertal
+        self.breakTime = newBreakTime
+
+        if self.serverStatus != 3:
+            if self.departureTime != self.IDLE:
+                self.serverStatus = 1
+            else:
+                self.serverStatus = 0
+
+        return {
+            "serverType": serverType,
+            "index": index,
+            "time": newBreakTime 
         }
 
     def blockServer(self):
