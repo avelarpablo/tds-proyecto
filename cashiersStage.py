@@ -11,16 +11,12 @@ class CashierStage:
         self.prioritaryCustomers = prioritaryCustomers
         self.commonCashiers = self.setCashiers(commonCashiers)
         self.prioritaryCashiers = self.setCashiers(prioritaryCashiers) 
-        self.breakTime = 240 # 4h de trabajo y descanso almuerzo 
-        self.operationalTime = 100000
 
         # Other variables
-        self.operationalInvertal = 300 # TODO 
-        self.fixTime = 150 # TODO 
         self.queueLimit = queueLimit
 
     def setCashiers(self, cashiersAmount):
-        return [Cashier() for i in range(cashiersAmount)]
+        return [Cashier(self.getNewBreakTime(0)) for i in range(cashiersAmount)]
 
     def arrival(self):
         randomValue = random.randint(1, 10) 

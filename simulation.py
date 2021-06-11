@@ -28,10 +28,10 @@ def setEventType(typeCode, serverType, index):
     return { "typeCode": typeCode, "serverType": serverType, "index": index }
 
 class Simulation:
-    def __init__(self, fistArrival):
+    def __init__(self):
         self.masterClock = 0
-        self.arrivalTime = fistArrival
-        self.stage = Stage(0, IDLE, 15, IDLE, 0)
+        self.arrivalTime = self.getNewArrivalTime()
+        self.stage = Stage()
         self.cashierStage = CashierStage(0, 0, 3, 1, 25)
         self.createFutureEventList()
         self.createResultsTable()
@@ -117,8 +117,6 @@ class Simulation:
             "NC2",
             *commonHeader,
             *priotaryHeader,
-            "BR2",
-            "OP2"
         ]]
 
         # Setting results table initial values with empty step

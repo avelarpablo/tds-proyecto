@@ -19,18 +19,15 @@ class Stage:
         3: "blocked"
     }
 
-    def __init__(self, numCustomers, departureTime, breakTime, operationalTime,
-        serverStatus, queueLimit=10000000):
+    def __init__(self, queueLimit=10000000):
         # Stage status variables
-        self.numCustomers = numCustomers
-        self.departureTime = departureTime
-        self.breakTime = breakTime
-        self.operationalTime = operationalTime
-        self.serverStatus = serverStatus
+        self.numCustomers = 0 
+        self.departureTime = self.IDLE
+        self.breakTime = self.getNewBreakTime(0)
+        self.operationalTime = self.IDLE
+        self.serverStatus = 0
 
         # Other variables
-        self.operationalInvertal = 200 # TODO función de probabilidad
-        self.fixTime = 50 # TODO función de probabilidad
         self.queueLimit = queueLimit
     
     def getNewDepartureTime(self, masterClock):
