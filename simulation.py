@@ -1,6 +1,8 @@
 from linkedList import LinkedList
 from stage import Stage
 from cashiersStage import CashierStage
+from numpy import np
+import math
 import csv
 
 IDLE = 100000
@@ -18,11 +20,13 @@ class Simulation:
     def __init__(self, fistArrival):
         self.masterClock = 0
         self.arrivalTime = fistArrival
-        self.arrivalInterval = 5 # TODO Función de probabilidad
         self.stage = Stage(0, IDLE, 15, IDLE, 0)
         self.cashierStage = CashierStage(0, 0, 3, 1, 25)
         self.createFutureEventList()
         self.createResultsTable()
+
+    def getNewArrivalTime(self):
+        return self.masterClock + math.trunc(np.random.normal(223.69, 92.15))
 
     def createFutureEventList(self):
         self.futureEventList = LinkedList()
@@ -155,7 +159,7 @@ class Simulation:
             self.stage.arrival()            
             
             # Set new arrival
-            self.arrivalTime = self.masterClock + self.arrivalInterval
+            self.arrivalTime = self.getNewArrivalTime()
             self.futureEventList.insertNode(
                 setEventType(ARRIVAL, 's', 0),
                 self.arrivalTime

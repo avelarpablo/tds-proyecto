@@ -1,3 +1,6 @@
+from numpy import np
+import math
+
 class Stage:
     IDLE = 100000
     SERVER_STATUS = {
@@ -17,10 +20,12 @@ class Stage:
         self.serverStatus = serverStatus
 
         # Other variables
-        self.departureInterval = 20 # TODO función de probabilidad
         self.operationalInvertal = 200 # TODO función de probabilidad
         self.fixTime = 50 # TODO función de probabilidad
         self.queueLimit = queueLimit
+    
+    def getNewDepartureTime(self, masterClock):
+        return masterClock + math.trunc(np.random.normal(31.66, 6.47))
     
     def arrival(self):
         self.numCustomers += 1
@@ -35,7 +40,7 @@ class Stage:
             return None
 
         # Agregar función de probabilidad
-        self.departureTime = masterClock + self.departureInterval
+        self.departureTime = self.getNewDepartureTime(masterClock)
         self.serverStatus = 1
 
         return {

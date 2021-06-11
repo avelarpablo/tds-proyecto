@@ -1,4 +1,6 @@
 from cashier import Cashier
+from numpy import np
+import math
 import random
 
 class CashierStage:
@@ -13,7 +15,6 @@ class CashierStage:
         self.operationalTime = 100000
 
         # Other variables
-        self.departureInterval = 30 # TODO - función de probabilidad 
         self.operationalInvertal = 300 # TODO 
         self.fixTime = 150 # TODO 
         self.queueLimit = queueLimit
@@ -36,6 +37,9 @@ class CashierStage:
         elif cashierType == 'p':
             self.prioritaryCustomers -= 1
             self.prioritaryCashiers[cashierIndex].departure()
+
+    def getNewDepartureTime(self, masterClock):
+        return masterClock + math.trunc(np.random.lognormal(269.03, 154.09))
     
     def getIdleCashier(self, type):
         if type == 'c':
@@ -78,7 +82,7 @@ class CashierStage:
                 continue
             
             # Agregar función de probabilidad
-            newDepartureTime = masterClock + self.departureInterval
+            newDepartureTime = self.getNewDepartureTime(masterClock)
             cashiers[cashierIndex].setNewDeparture(newDepartureTime)
 
             return {
