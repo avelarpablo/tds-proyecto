@@ -1,4 +1,4 @@
-from numpy import np
+import numpy as np
 import math
 
 class Stage:
@@ -26,6 +26,12 @@ class Stage:
     
     def getNewDepartureTime(self, masterClock):
         return masterClock + math.trunc(np.random.normal(31.66, 6.47))
+    
+    def getNewOperationalTime(self, masterClock):
+        return masterClock + math.trunc(np.random.exponential(533))
+    
+    def getNewBreakTime(self, masterClock):
+        return masterClock + math.trunc(np.random.normal(36119, 21248))
     
     def arrival(self):
         self.numCustomers += 1
@@ -64,7 +70,7 @@ class Stage:
             ]
 
         elif self.serverStatus == 0:
-            newOperationalTime = masterClock + self.fixTime
+            newOperationalTime = self.getNewOperationalTime(masterClock)
 
             # Updating status
             self.breakTime = self.IDLE
@@ -86,7 +92,7 @@ class Stage:
         # Updating state
         self.operationalTime = self.IDLE
 
-        newBreakTime = masterClock + self.operationalInvertal
+        newBreakTime = self.getNewBreakTime(masterClock)
         self.breakTime = newBreakTime
 
         if self.serverStatus != 3:

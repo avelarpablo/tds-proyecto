@@ -1,7 +1,7 @@
 from linkedList import LinkedList
 from stage import Stage
 from cashiersStage import CashierStage
-from numpy import np
+import numpy as np
 import math
 import csv
 

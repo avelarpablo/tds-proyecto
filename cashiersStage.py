@@ -1,5 +1,5 @@
 from cashier import Cashier
-from numpy import np
+import numpy as np
 import math
 import random
 
@@ -39,7 +39,13 @@ class CashierStage:
             self.prioritaryCashiers[cashierIndex].departure()
 
     def getNewDepartureTime(self, masterClock):
-        return masterClock + math.trunc(np.random.lognormal(269.03, 154.09))
+        return masterClock + math.trunc(np.random.lognormal(5.45, 0.53))
+
+    def getNewOperationalTime(self, masterClock):
+        return masterClock + math.trunc(np.random.exponential(4095))
+    
+    def getNewBreakTime(self, masterClock):
+        return masterClock + math.trunc(np.random.normal(17022, 6365))
     
     def getIdleCashier(self, type):
         if type == 'c':
@@ -111,7 +117,7 @@ class CashierStage:
             ]
 
         elif cashier.status == 0:
-            newOperationalTime = masterClock + cashier.fixTime
+            newOperationalTime = self.getNewOperationalTime(masterClock)
 
             # Updating status
             cashier.breakTime = cashier.IDLE
@@ -137,7 +143,7 @@ class CashierStage:
         cashier.operationalTime = cashier.IDLE
         cashier.status = 0
 
-        newBreakTime = masterClock + cashier.operationalInvertal
+        newBreakTime = self.getNewBreakTime(masterClock)
         cashier.breakTime = newBreakTime
 
         return {
