@@ -1,7 +1,18 @@
 from linkedList import LinkedList
 from stage import Stage
 from cashiersStage import CashierStage
-import numpy as np
+
+try:
+    import numpy as np
+except ImportError:
+    print("You must install numpy for the correct operation of this program.")
+    print("You can do it with pip with the next instruction: pip install numpy")
+    exit()
+except ModuleNotFoundError:
+    print("You must install numpy for the correct operation of this program.")
+    print("You can do it with pip with the next instruction: pip install numpy")
+    exit()
+
 import math
 import csv
 
