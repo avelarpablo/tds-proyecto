@@ -1,3 +1,19 @@
+"""
+    Universidad de El Salvador
+
+    Authors: 
+    - Avelar Melgar, José Pablo		    –	AM16015
+    - Campos Martínez, Abraham Isaac 	– 	CM17045
+    - Lizama Escobar, Oscar Omar	    –	LE17004
+    - Paredes Pastrán, Carlos Enrique	–	PP17012
+    - Quinteros Lemus, Diego Enrique	–	QL17001
+
+    Activity: Application project
+    Subject: Técnicas de Simulación (TDS115)
+    Professor: Lic. Guillermo Mejía
+    Date: 06/11/2021
+"""
+
 from simulation import Simulation
 
 def validNumberInput(message, min=None, max=None):
