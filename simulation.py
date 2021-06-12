@@ -116,9 +116,9 @@ class Simulation:
         priotaryHeader = []
         for i in range(len(self.cashierStage.prioritaryCashiers)):
             header = [
-                f"DT2-D{i + 1}",
-                f"BT2-D{i + 1}",
-                f"OT2-D{i + 1}",
+                f"DT2-P{i + 1}",
+                f"BT2-P{i + 1}",
+                f"OT2-P{i + 1}",
                 f"PS{i + 1}"
             ]
 
